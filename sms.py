@@ -7,6 +7,89 @@ import pymysql
 
 #functionallity part
 
+def show_student():
+    query = 'select * from student'
+    mycursor.execute(query)
+    fetched_data = mycursor.fetchall()
+    studentTable.delete(*studentTable.get_children())
+    for data in fetched_data:
+        studentTable.insert('', END, values=data)
+
+
+
+
+def delete_student():
+    indexing=studentTable.focus()
+    print(indexing)
+    content=studentTable.item(indexing)
+    content_id=content['values'][0]
+    query='delete from student where id=%s'
+    mycursor.execute(query,content_id)
+    con.commit()
+    messagebox.showinfo('Deleted',f'Id {content_id} is deleted successfully')
+    query='select * from student'
+    mycursor.execute(query)
+    fetched_data=mycursor.fetchall()
+    studentTable.delete(*studentTable.get_children())
+    for data in fetched_data:
+        studentTable.insert('',END,values=data)
+
+
+
+def search_student():
+    def search_data():
+        query='select * from student where id=%s or name=%s or email =%s or mobile=%s or address=%s or gender=%s or dob=%s'
+        mycursor.execute(query,(idEntry.get(),nameEntry.get(),emailEntry.get(),phoneEntry.get(),addressEntry.get(),genderEntry.get(),dobEntry.get()))
+        studentTable.delete(*studentTable.get_children())
+        fetched_data=mycursor.fetchall()
+        for data in fetched_data:
+            studentTable.insert('',END,values=data)
+
+
+
+
+    search_window=Toplevel()
+    search_window.title('Search Student')
+    search_window.grab_set()
+    search_window.resizable(False,False)
+    idLabel=Label(search_window,text='Id',font=('times new roman',20,'bold'))
+    idLabel.grid(row=0,column=0,padx=30,pady=15,sticky=W)
+    idEntry=Entry(search_window,font=('roman',15,'bold'),width=24)
+    idEntry.grid(row=0,column=1,pady=15,padx=10)
+
+    nameLabel = Label(search_window, text='Name', font=('times new roman', 20, 'bold'))
+    nameLabel.grid(row=1, column=0, padx=30, pady=15,sticky=W)
+    nameEntry = Entry(search_window, font=('roman', 15, 'bold'), width=24)
+    nameEntry.grid(row=1, column=1, pady=15, padx=10)
+
+    phoneLabel = Label(search_window, text='Phone', font=('times new roman', 20, 'bold'))
+    phoneLabel.grid(row=2, column=0, padx=30, pady=15,sticky=W)
+    phoneEntry = Entry(search_window, font=('roman', 15, 'bold'), width=24)
+    phoneEntry.grid(row=2, column=1, pady=15, padx=10)
+
+    emailLabel = Label(search_window, text='Email', font=('times new roman', 20, 'bold'))
+    emailLabel.grid(row=3, column=0, padx=30, pady=15,sticky=W)
+    emailEntry = Entry(search_window, font=('roman', 15, 'bold'), width=24)
+    emailEntry.grid(row=3, column=1, pady=15, padx=10)
+
+    addressLabel = Label(search_window, text='Address', font=('times new roman', 20, 'bold'))
+    addressLabel.grid(row=4, column=0, padx=30, pady=15,sticky=W)
+    addressEntry = Entry(search_window, font=('roman', 15, 'bold'), width=24)
+    addressEntry.grid(row=4, column=1, pady=15, padx=10)
+
+    genderLabel = Label(search_window, text='Gender', font=('times new roman', 20, 'bold'))
+    genderLabel.grid(row=5, column=0, padx=30, pady=15,sticky=W)
+    genderEntry = Entry(search_window, font=('roman', 15, 'bold'), width=24)
+    genderEntry.grid(row=5, column=1, pady=15, padx=10)
+
+    dobLabel = Label(search_window, text='D.O.B', font=('times new roman', 20, 'bold'))
+    dobLabel.grid(row=6, column=0, padx=30, pady=15,sticky=W)
+    dobEntry = Entry(search_window, font=('roman', 15, 'bold'), width=24)
+    dobEntry.grid(row=6, column=1, pady=15, padx=10)
+
+    search_student_button=ttk.Button(search_window,text='Search',command=search_data)
+    search_student_button.grid(row=7,columnspan=2,pady=15)
+
 def add_student():
     def add_data():
         if idEntry.get()=='' or nameEntry.get()=='' or phoneEntry.get()=='' or emailEntry.get()=='' or addressEntry.get()=='' or genderEntry.get()=='' or dobEntry.get()=='':
@@ -42,9 +125,8 @@ def add_student():
             mycursor.execute(query)
             fetched_data=mycursor.fetchall()
             studentTable.delete(*studentTable.get_children())
-            for  data in fetched_data:
-                datalist=list(data)
-                studentTable.insert('',END,values=datalist)
+            for data in fetched_data:
+                studentTable.insert('',END,values=data)
 
 
     add_window=Toplevel()
@@ -197,16 +279,16 @@ logo_label.grid(row=0,column=0)
 addstudentButton=Button(leftFrame,text='Add Student',width=25,state=DISABLED,command=add_student)
 addstudentButton.grid(row=1,column=0,pady=20)
 
-searchstudentButton=Button(leftFrame,text='Search Student',width=25,state=DISABLED)
+searchstudentButton=Button(leftFrame,text='Search Student',width=25,state=DISABLED,command=search_student)
 searchstudentButton.grid(row=2,column=0,pady=20)
 
-deletestudentButton=Button(leftFrame,text='Delete Student',width=25,state=DISABLED)
+deletestudentButton=Button(leftFrame,text='Delete Student',width=25,state=DISABLED,command=delete_student)
 deletestudentButton.grid(row=3,column=0,pady=20)
 
 updatestudentButton=Button(leftFrame,text='Update Student',width=25,state=DISABLED)
 updatestudentButton.grid(row=4,column=0,pady=20)
 
-showstudentButton=Button(leftFrame,text='Show Student',width=25,state=DISABLED)
+showstudentButton=Button(leftFrame,text='Show Student',width=25,state=DISABLED,command=show_student)
 showstudentButton.grid(row=5,column=0,pady=20)
 
 exportstudentButton=Button(leftFrame,text='Export Student',width=25,state=DISABLED)
